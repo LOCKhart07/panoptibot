@@ -20,7 +20,12 @@ Panoptibot is a Telegram bot to manage Olas services deployed on Propel. Panopti
     cd panoptibot
     ```
 
-2. Copy the env file:
+2. Install all deps
+    ```bash
+    uv sync
+    ```
+
+3. Copy the env file:
 
     ```bash
     cp sample.env .env
@@ -44,6 +49,7 @@ make run
 
     ```bash
     make install
+    make start
     ```
 
 2. Verify it is working:

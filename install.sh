@@ -2,12 +2,14 @@
 
 USER_NAME=$(whoami)
 REPO_PATH=$(pwd)
+UV_PATH=$(which uv)
 INPUT_FILE="panoptibot.service.template"
 OUTPUT_FILE="panoptibot.service"
 
 # Create panoptibot.service
 sed -e "s/{user}/$USER_NAME/g" \
     -e "s|{repo_path}|$REPO_PATH|g" \
+    -e "s|{poetry_path}|$UV_PATH|g" \
     "$INPUT_FILE" > "$OUTPUT_FILE"
 
 # Stop service if it is running

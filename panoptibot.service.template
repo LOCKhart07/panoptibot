@@ -6,7 +6,7 @@ Wants=network-online.target
 [Service]
 Type=simple
 WorkingDirectory={repo_path}
-ExecStart=uv run python {repo_path}/run.py
+ExecStart={uv_path} run python {repo_path}/run.py
 Restart=on-failure
 RestartSec=10
 StandardOutput=journal
