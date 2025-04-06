@@ -45,10 +45,11 @@ make run
 
 ## Run Panoptibot as a systemd service
 
-1. Install:
+1. Install and run:
 
     ```bash
     make install
+    make enable
     make start
     ```
 

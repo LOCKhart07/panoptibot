@@ -37,7 +37,6 @@ status:
 .PHONY: install
 install:
 	bash install.sh
-	sudo systemctl enable panoptibot.service
 
 
 .PHONY: enable
