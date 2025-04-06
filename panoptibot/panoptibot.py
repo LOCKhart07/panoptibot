@@ -46,6 +46,23 @@ def run_panoptibot() -> None:
             disable_web_page_preview=True,
         )
 
+    async def rounds_command(
+        update: Update, context: ContextTypes.DEFAULT_TYPE
+    ) -> None:
+        """Get rounds command"""
+
+        table = []
+        for service in propel.services.values():
+            for agent in service.agents.values():
+                round_ = agent.get_current_round()
+                table.append([agent.name, round_])
+
+        await update.message.reply_text(
+            text=f"```Rounds\n{format_table(table)}```",
+            parse_mode=ParseMode.MARKDOWN_V2,
+            disable_web_page_preview=True,
+        )
+
     async def state_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         """Get state command"""
 
@@ -152,6 +169,7 @@ def run_panoptibot() -> None:
         await app.bot.set_my_commands(
             [
                 ("healthcheck", "Check the services health"),
+                ("rounds", "Check the agent current rounds"),
                 ("state", "Check the agent state on Propel"),
                 ("reset", "Reset a service"),
                 ("stop", "Stop a service"),
@@ -164,6 +182,7 @@ def run_panoptibot() -> None:
 
     # Add commands
     app.add_handler(CommandHandler("healthcheck", health_command))
+    app.add_handler(CommandHandler("rounds", rounds_command))
     app.add_handler(CommandHandler("state", state_command))
     app.add_handler(CommandHandler("reset", reset_command))
     app.add_handler(CommandHandler("stop", stop_command))

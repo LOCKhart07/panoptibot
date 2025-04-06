@@ -86,10 +86,10 @@ class Agent:
 
     def get_current_round(self) -> Optional[str]:
         """Get the current round"""
-        is_healthy, status = self.get_agent_health()
+        _, status = self.get_agent_health()
 
-        if not is_healthy:
-            return None
+        if "current_round" in status:
+            return status["current_round"]
 
         if "rounds" not in status:
             return None
@@ -97,11 +97,7 @@ class Agent:
         if len(status["rounds"]) == 0:
             return None
 
-        return (
-            status["rounds"][-1]
-            if "current_round" not in status
-            else status["rounds"]["current_round"]
-        )
+        return status["rounds"][-1]
 
 
 class Service:
