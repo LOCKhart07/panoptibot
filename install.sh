@@ -9,7 +9,7 @@ OUTPUT_FILE="panoptibot.service"
 # Create panoptibot.service
 sed -e "s/{user}/$USER_NAME/g" \
     -e "s|{repo_path}|$REPO_PATH|g" \
-    -e "s|{poetry_path}|$UV_PATH|g" \
+    -e "s|{uv_path}|$UV_PATH|g" \
     "$INPUT_FILE" > "$OUTPUT_FILE"
 
 # Stop service if it is running
