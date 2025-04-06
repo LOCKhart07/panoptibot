@@ -40,7 +40,7 @@ install:
 
 
 .PHONY: enable
-install:
+enable:
 	sudo systemctl enable panoptibot.service
 
 
