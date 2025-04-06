@@ -35,10 +35,11 @@ def run_panoptibot() -> None:
         table = []
         for service in propel.services.values():
             for agent in service.agents.values():
-                if agent.healthcheck():
-                    table.append([agent.name, "✅"])
+                is_agent_healthy, period = agent.healthcheck()
+                if is_agent_healthy:
+                    table.append([agent.name, "✅", f"P{period}"])
                 else:
-                    table.append([agent.name, "❌"])
+                    table.append([agent.name, "❌", f"P{period}"])
 
         await update.message.reply_text(
             text=f"```Healthcheck\n{format_table(table)}```",

@@ -79,10 +79,11 @@ class Agent:
         except Exception:
             return False, {}
 
-    def healthcheck(self) -> bool:
+    def healthcheck(self) -> Tuple[bool, Optional[str]]:
         """Healthcheck the agent"""
-        is_healthy, _ = self.get_agent_health()
-        return is_healthy
+        is_healthy, data = self.get_agent_health()
+        period = data.get("period", None)
+        return is_healthy, period
 
     def get_current_round(self) -> Optional[str]:
         """Get the current round"""
@@ -129,7 +130,8 @@ class Service:
         alive_threshold = math.floor(len(self.agents) * 2 / 3) + 1
         alive_agents = 0
         for agent in self.agents.values():
-            if agent.healthcheck():
+            is_agent_healthy, _ = agent.healthcheck()
+            if is_agent_healthy:
                 alive_agents += 1
         is_service_healthy = alive_agents >= alive_threshold
 
