@@ -1,0 +1,20 @@
+[Unit]
+Description=Run Panoptibot bot
+After=network.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory={repo_path}
+ExecStart=uv run python {repo_path}/run.py
+Restart=on-failure
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=panoptibot
+User={user}
+Group={user}
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

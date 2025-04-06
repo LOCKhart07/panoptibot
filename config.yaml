@@ -1,0 +1,11 @@
+services:
+  contribute:
+    - contribute_agent_0
+    - contribute_agent_1
+    - contribute_agent_2
+    - contribute_agent_3
+  governatooorr:
+    - governatooorr_agent_0
+    - governatooorr_agent_1
+    - governatooorr_agent_2
+    - governatooorr_agent_3
