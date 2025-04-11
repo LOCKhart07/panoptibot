@@ -161,6 +161,18 @@ def run_panoptibot() -> None:
                 message += f"Service {service.name} is not healthy\n"
                 service.last_notification = now
 
+            if service.not_healthy_counter >= 120:
+                is_restarting = False
+                for agent in service.agents.values():
+                    agent_state = agent.get_agent_state()
+                    if agent_state.lower() == "restarting":
+                        is_restarting = True
+                        break
+
+                if not is_restarting:
+                    service.restart()
+                    message += f"Service {service.name} is being restarted\n"
+
         if message:
             await context.bot.send_message(chat_id=CHAT_ID, text=message)
 
