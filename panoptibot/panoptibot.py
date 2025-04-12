@@ -169,8 +169,12 @@ def run_panoptibot() -> None:
                         is_restarting = True
                         break
 
-                if not is_restarting:
+                if (
+                    not is_restarting
+                    and now - service.last_restart > datetime.timedelta(minutes=30)
+                ):
                     service.restart()
+                    service.last_restart = now
                     message += f"Service {service.name} is being restarted\n"
 
         if message:

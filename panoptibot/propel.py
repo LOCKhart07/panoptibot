@@ -111,6 +111,7 @@ class Service:
         self.agents = {name: Agent(name, client) for name in agents}
         self.not_healthy_counter = 0
         self.last_notification = None
+        self.last_restart = None
 
     def restart(self):
         """Restart the service"""
