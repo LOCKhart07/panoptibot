@@ -158,7 +158,7 @@ def run_panoptibot() -> None:
                 service.last_notification is None
                 or now - service.last_notification > datetime.timedelta(hours=1)
             ):
-                message += f"Service {service.name} is not healthy\n"
+                message = f"Service {service.name} is not healthy\n"
                 service.last_notification = now
 
             if service.not_healthy_counter >= 120:
@@ -169,13 +169,13 @@ def run_panoptibot() -> None:
                         is_restarting = True
                         break
 
-                if (
-                    not is_restarting
-                    and now - service.last_restart > datetime.timedelta(minutes=30)
+                if not is_restarting and (
+                    service.last_restart is None
+                    or now - service.last_restart > datetime.timedelta(minutes=30)
                 ):
                     service.restart()
                     service.last_restart = now
-                    message += f"Service {service.name} is being restarted\n"
+                    message = f"Service {service.name} is being restarted\n"
 
         if message:
             await context.bot.send_message(chat_id=CHAT_ID, text=message)
