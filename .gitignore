@@ -6,3 +6,5 @@
 panoptibot/__pycache__/
 
 panoptibot.service
+
+.vscode/

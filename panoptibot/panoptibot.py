@@ -152,8 +152,11 @@ def run_panoptibot() -> None:
 
         message = ""
         for service in propel.services.values():
-            service.healthcheck()
+            was_not_healthy = service.not_healthy_counter >= 30
+            is_healthy = service.healthcheck()
             now = datetime.datetime.now()
+
+            # Notify unhealthy services after 30 minutes every hour
             if service.not_healthy_counter >= 30 and (
                 service.last_notification is None
                 or now - service.last_notification > datetime.timedelta(hours=1)
@@ -161,7 +164,9 @@ def run_panoptibot() -> None:
                 message = f"Service {service.name} is not healthy\n"
                 service.last_notification = now
 
+            # Restart services that have been unhealthy for 2 hours
             if service.not_healthy_counter >= 120:
+                # Check if the service is restarting
                 is_restarting = False
                 for agent in service.agents.values():
                     agent_state = agent.get_agent_state()
@@ -176,6 +181,11 @@ def run_panoptibot() -> None:
                     service.restart()
                     service.last_restart = now
                     message = f"Service {service.name} is being restarted\n"
+
+            # Notify healthy services
+            if was_not_healthy and is_healthy:
+                message = f"Service {service.name} is healthy again\n"
+                service.last_notification = now
 
         if message:
             await context.bot.send_message(chat_id=CHAT_ID, text=message)
