@@ -3,6 +3,7 @@
 import datetime
 import logging
 import os
+import time
 
 import dotenv
 from telegram import Update
@@ -18,7 +19,7 @@ logger = logging.getLogger("telegram_bot")
 dotenv.load_dotenv(override=True)
 
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
-CHAT_ID = os.getenv("CHAT_ID")
+CHAT_IDS = [int(i) for i in os.getenv("CHAT_IDS", "").split(",") if i]
 
 
 def run_panoptibot() -> None:
@@ -142,10 +143,13 @@ def run_panoptibot() -> None:
     # Tasks
     async def start(context: ContextTypes.DEFAULT_TYPE):
         """Start"""
-        await context.bot.send_message(
-            chat_id=CHAT_ID,
-            text="Panoptibot has started",
-        )
+        logger.info("Running start task. Chat IDs: %s", CHAT_IDS)
+        for chat_id in CHAT_IDS:
+            await context.bot.send_message(
+                chat_id=chat_id,
+                text="Panoptibot has started",
+            )
+            time.sleep(1)  # Sleep to avoid rate limiting
 
     async def health_task(context: ContextTypes.DEFAULT_TYPE):
         logger.info("Running healthcheck task")
@@ -188,7 +192,9 @@ def run_panoptibot() -> None:
                 service.last_notification = now
 
         if message:
-            await context.bot.send_message(chat_id=CHAT_ID, text=message)
+            for chat_id in CHAT_IDS:
+                await context.bot.send_message(chat_id=chat_id, text=message)
+                time.sleep(1)
 
     async def post_init(app):
         await app.bot.set_my_description("A bot to monitor Olas services")
