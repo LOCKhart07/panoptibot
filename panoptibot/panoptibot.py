@@ -190,7 +190,6 @@ def run_panoptibot() -> None:
                     )
                     if len(rounds) > 0 and mech_response_count >= len(rounds) // 2:
                         message = f"Service {service.name} is stuck in mech_response_round, not restarting\n"
-                        service.last_restart = now  # Avoid multiple notifications
                         continue
 
                     service.restart()
