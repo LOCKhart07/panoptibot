@@ -182,16 +182,6 @@ def run_panoptibot() -> None:
                     service.last_restart is None
                     or now - service.last_restart > datetime.timedelta(minutes=30)
                 ):
-                    rounds = [
-                        agent.get_current_round() for agent in service.agents.values()
-                    ]
-                    mech_response_count = sum(
-                        1 for r in rounds if r == "mech_response_round"
-                    )
-                    if len(rounds) > 0 and mech_response_count >= len(rounds) // 2:
-                        message = f"Service {service.name} is stuck in mech_response_round, not restarting\n"
-                        continue
-
                     service.restart()
                     service.last_restart = now
                     message = f"Service {service.name} is being restarted\n"
