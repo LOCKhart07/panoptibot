@@ -4,6 +4,7 @@ import datetime
 import logging
 import os
 import time
+from functools import wraps
 
 import dotenv
 from telegram import Update
@@ -22,12 +23,30 @@ TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 CHAT_IDS = [int(i) for i in os.getenv("CHAT_IDS", "").split(",") if i]
 
 
+def restricted(func):
+    """Decorator to restrict access to approved chat IDs."""
+
+    @wraps(func)
+    async def wrapped(
+        update: Update, context: ContextTypes.DEFAULT_TYPE, *args, **kwargs
+    ):
+        chat_id = update.effective_chat.id
+        if chat_id not in CHAT_IDS:
+            logger.warning("Unauthorized access denied for chat_id: %s", chat_id)
+            await update.message.reply_text("⛔ Unauthorized access")
+            return
+        return await func(update, context, *args, **kwargs)
+
+    return wrapped
+
+
 def run_panoptibot() -> None:
     """Run the bot"""
 
     propel = Propel()
 
     # Commands
+    @restricted
     async def health_command(
         update: Update, context: ContextTypes.DEFAULT_TYPE
     ) -> None:
@@ -48,6 +67,7 @@ def run_panoptibot() -> None:
             disable_web_page_preview=True,
         )
 
+    @restricted
     async def rounds_command(
         update: Update, context: ContextTypes.DEFAULT_TYPE
     ) -> None:
@@ -65,6 +85,7 @@ def run_panoptibot() -> None:
             disable_web_page_preview=True,
         )
 
+    @restricted
     async def state_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         """Get state command"""
 
@@ -80,6 +101,7 @@ def run_panoptibot() -> None:
             disable_web_page_preview=True,
         )
 
+    @restricted
     async def reset_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         """Reset a service"""
 
@@ -110,6 +132,7 @@ def run_panoptibot() -> None:
             disable_web_page_preview=True,
         )
 
+    @restricted
     async def stop_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         """Stop a service"""
 
