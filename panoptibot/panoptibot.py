@@ -1,5 +1,6 @@
 """ "Panoptibot Telegram bot"""
 
+import asyncio
 import datetime
 import logging
 import os
@@ -163,6 +164,17 @@ def run_panoptibot() -> None:
             disable_web_page_preview=True,
         )
 
+    @restricted
+    async def summary_command(
+        update: Update, context: ContextTypes.DEFAULT_TYPE
+    ) -> None:
+        """Get summary command"""
+        await asyncio.gather(
+            health_command(update, context),
+            rounds_command(update, context),
+            state_command(update, context),
+        )
+
     # Tasks
     async def start(context: ContextTypes.DEFAULT_TYPE):
         """Start"""
@@ -229,6 +241,7 @@ def run_panoptibot() -> None:
                 ("state", "Check the agent state on Propel"),
                 ("reset", "Reset a service"),
                 ("stop", "Stop a service"),
+                ("summary", "Get a summary of healthcheck, rounds and state"),
             ]
         )
 
@@ -242,6 +255,7 @@ def run_panoptibot() -> None:
     app.add_handler(CommandHandler("state", state_command))
     app.add_handler(CommandHandler("reset", reset_command))
     app.add_handler(CommandHandler("stop", stop_command))
+    app.add_handler(CommandHandler("summary", summary_command))
 
     # Add tasks
     job_queue.run_once(start, when=3)  # in 1 second
